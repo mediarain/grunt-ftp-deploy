@@ -128,17 +128,6 @@ module.exports = function(grunt) {
     });
   }
 
-  function getAuthByKey (inKey) {
-    var tmpStr;
-    var retVal = null;
-
-    if (fs.existsSync('.ftppass')) {
-      tmpStr = grunt.file.read('.ftppass');
-      if (inKey != null && tmpStr.length) retVal = JSON.parse(tmpStr)[inKey];
-    }
-    return retVal;
-  }
-
   // The main grunt task
   grunt.registerMultiTask('ftp-deploy', 'Deploy code over FTP', function() {
     var done = this.async();
@@ -151,7 +140,10 @@ module.exports = function(grunt) {
 
     localRoot = Array.isArray(this.data.src) ? this.data.src[0] : this.data.src;
     remoteRoot = Array.isArray(this.data.dest) ? this.data.dest[0] : this.data.dest;
-    authVals = getAuthByKey(this.data.auth.authKey);
+    authVals = {
+      username = this.data.username,
+      password = this.data.password
+    };
     exclusions = this.data.exclusions || [];
     ftp.useList = true;
     toTransfer = dirParseSync(localRoot);
